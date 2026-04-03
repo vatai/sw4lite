@@ -2,6 +2,7 @@
 import os
 import re
 import sys
+from pathlib import Path
 from typing import Optional
 
 from tadashi.apps import App
@@ -42,12 +43,16 @@ class Sw4Lite(App):
         return ["-Isrc/double"]
 
     def compile_cmd(self, suffix: str) -> list[str]:
+        self.source.with_suffix(".c").touch()
+        self.source.with_suffix(".o").touch()
         cmd = [
             "make",
             "-j",
             "ckernel=yes",
             f"SOURCE={self.source.with_suffix('').name}",
             f"APP={self.output_binary.name}",
+            "CC=mpiclang",
+            "CXX=mpiclang++",
         ]
         return cmd
 
@@ -72,7 +77,7 @@ class Sw4Lite(App):
 
 def main():
     app = Sw4Lite(translator=Polly("clang"))
-    ML4TADASHI.run(Sw4Lite, {"translator": "Polly"})
+    ML4TADASHI.run(Sw4Lite, {"translator": "Polly", "translator_params": "clang++"})
 
 
 if __name__ == "__main__":
