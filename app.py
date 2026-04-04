@@ -2,6 +2,7 @@
 import os
 import re
 import sys
+from shutil import which
 from subprocess import CompletedProcess
 from typing import Optional
 
@@ -42,6 +43,22 @@ class Sw4Lite(App):
     def app_required_options(self) -> list[str]:
         return ["-Isrc/double"]
 
+    @staticmethod
+    def get_CC_and_CXX():
+        candidates = [
+            ["mpiclang", "mpiclang++"],
+            ["mpicc", "mpic++"],
+        ]
+        winner = None
+        for candidate in candidates:
+            if all([which(cc) in candidate]):
+                winner = candidate
+                break
+        if winner is None:
+            raise ValueError("No MPI compilers found")
+        rv = [f"{k}={v}" for k, v in zip(["CC", "CXX"], winner)]
+        return rv
+
     def compile_cmd(self, suffix: str) -> list[str]:
         self.source.with_suffix(".c").touch()
         self.source.with_suffix(".o").touch()
@@ -51,9 +68,7 @@ class Sw4Lite(App):
             "ckernel=yes",
             f"SOURCE={self.source.with_suffix('').name}",
             f"APP={self.output_binary.name}",
-            "CC=mpiclang",
-            "CXX=mpiclang++",
-        ]
+        ] + self.get_CC_and_CXX()
         return cmd
 
     def run_cmd(self) -> list[str]:
