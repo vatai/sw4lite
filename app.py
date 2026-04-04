@@ -2,11 +2,11 @@
 import os
 import re
 import sys
-from pathlib import Path
+from subprocess import CompletedProcess
 from typing import Optional
 
 from tadashi.apps import App
-from tadashi.translators import Polly, Translator
+from tadashi.translators import Translator
 
 ml4tadashi = os.path.dirname(__file__)
 ml4tadashi = os.path.dirname(ml4tadashi)
@@ -76,7 +76,7 @@ class Sw4Lite(App):
 
 
 def main():
-    app = Sw4Lite(translator=Polly("clang"))
+    # app = Sw4Lite(translator=Polly("clang"))
     ML4TADASHI.run(Sw4Lite, {"translator": "Polly", "translator_params": "clang++"})
 
 
