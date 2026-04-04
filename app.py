@@ -51,7 +51,7 @@ class Sw4Lite(App):
         ]
         winner = None
         for candidate in candidates:
-            if all([which(cc) in candidate]):
+            if all([which(cc) for cc in candidate]):
                 winner = candidate
                 break
         if winner is None:
