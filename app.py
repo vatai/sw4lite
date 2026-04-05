@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import re
+import shutil
 import sys
 from shutil import which
 from subprocess import CompletedProcess
@@ -61,7 +62,10 @@ class Sw4Lite(App):
 
     def compile_cmd(self, suffix: str) -> list[str]:
         self.source.with_suffix(".C").touch()
-        self.source.with_suffix(".o").touch()
+        src = self.source.with_suffix(".o")
+        dst = self.output_binary.with_suffix(".o")
+        shutil.move(src, dst)
+        dst.touch()
         cmd = [
             "make",
             "-j",
@@ -80,7 +84,7 @@ class Sw4Lite(App):
 
     def run_cmd(self) -> list[str]:
         cmd = [
-            str(self.output_binary.name),
+            str(self.output_binary),
             "tests/pointsource/pointsource.in",
         ]
         return cmd
