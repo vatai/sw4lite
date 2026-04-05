@@ -94,7 +94,6 @@ class Sw4Lite(App):
 
     def extract_runtime(self, proc: CompletedProcess) -> float:
         stdout = proc.stdout.decode()
-        print(stdout)
         lines = stdout.split("\n")
         pattern = re.compile(r" Total running time:.*(\d+\.\d+).*")
         for line in lines:
