@@ -79,9 +79,10 @@ class Sw4Lite(App):
     @property
     def output_binary(self) -> Path:
         """The output binary obtained after compilation."""
-        parent = self.source.parent.parent
+        parent = self.source.parent.parent.parent
         name = self.source.with_suffix("")
-        return parent / "optimize_c" / name
+        ob = parent / "optimize_c" / name
+        return ob
 
     def run_cmd(self) -> list[str]:
         cmd = [
