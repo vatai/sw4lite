@@ -71,9 +71,16 @@ class Sw4Lite(App):
         ] + self.get_CC_and_CXX()
         return cmd
 
+    @property
+    def output_binary(self) -> Path:
+        """The output binary obtained after compilation."""
+        parent = self.source.parent.parent
+        name = self.source.with_suffix("")
+        return parent / "optimize_c" / name
+
     def run_cmd(self) -> list[str]:
         cmd = [
-            f"./optimize_c/{self.output_binary.name}",
+            str(self.output_binary.name),
             "tests/pointsource/pointsource.in",
         ]
         return cmd
