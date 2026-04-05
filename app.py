@@ -60,7 +60,7 @@ class Sw4Lite(App):
         return rv
 
     def compile_cmd(self, suffix: str) -> list[str]:
-        self.source.with_suffix(".c").touch()
+        self.source.with_suffix(".C").touch()
         self.source.with_suffix(".o").touch()
         cmd = [
             "make",
