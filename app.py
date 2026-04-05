@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 import os
 import re
-import shutil
 import sys
 from pathlib import Path
-from shutil import which
+from shutil import move, which
 from subprocess import CompletedProcess
 from typing import Optional
 
@@ -65,7 +64,8 @@ class Sw4Lite(App):
         self.source.with_suffix(".C").touch()
         src = self.source.with_suffix(".o")
         dst = self.output_binary.with_suffix(".o")
-        shutil.move(src, dst)
+        if src.exists():
+            move(src, dst)
         dst.touch()
         cmd = [
             "make",
