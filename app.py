@@ -8,7 +8,7 @@ from subprocess import CompletedProcess
 from typing import Optional
 
 from tadashi.apps import App
-from tadashi.translators import Translator
+from tadashi.translators import Translator, Polly
 
 ml4tadashi = os.path.dirname(__file__)
 ml4tadashi = os.path.dirname(ml4tadashi)
@@ -26,8 +26,8 @@ class Sw4Lite(App):
         self,
         source="src/ew-cfromfort.C",
         translator: Optional[Translator] = None,
-        compiler_options: list = None,
-        ephemeral: bool = False,
+        compiler_options: list = ["-DSW4_CROUTINES"],
+        ephemeral: bool = True,
         populate_scops: bool = True,
     ):
         super().__init__(
@@ -42,7 +42,7 @@ class Sw4Lite(App):
         return {}
 
     def app_required_options(self) -> list[str]:
-        return ["-Isrc/double"]
+        return ["-Isrc", "-Isrc/double"]
 
     @staticmethod
     def get_CC_and_CXX():
@@ -61,12 +61,13 @@ class Sw4Lite(App):
         return rv
 
     def compile_cmd(self, suffix: str) -> list[str]:
-        self.source.with_suffix(".C").touch()
         src = self.source.with_suffix(".o")
-        dst = self.output_binary.with_suffix(".o")
         if src.exists():
+            src.with_suffix(".C").touch()
+            dst = self.output_binary.with_suffix(".o")
+            dst.parent.mkdir(exist_ok=True)
             move(src, dst)
-        dst.touch()
+            dst.touch()
         cmd = [
             "make",
             "-j",
